@@ -1,5 +1,8 @@
 package org.example.zzudate.utils;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class CurrentUser {
     private static final ThreadLocal<Long> USER_THREAD_LOCAL =
             new ThreadLocal<>();
@@ -8,7 +11,7 @@ public class CurrentUser {
         USER_THREAD_LOCAL.set(userId);
     }
 
-    public static Long getUserId() {
+    public static String getUserId() {
         return USER_THREAD_LOCAL.get();
     }
 

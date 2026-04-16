@@ -9,10 +9,10 @@ import org.example.zzudate.utils.LoginInterceptor;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Autowired
-    private LoginInterceptor loginInterceptor; // 改成你定义的拦截器类名
+    private LoginInterceptor loginInterceptor;
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor) // 使用刚才注入的变量
+        registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/auth/**",

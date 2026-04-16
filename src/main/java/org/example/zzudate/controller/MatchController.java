@@ -8,12 +8,15 @@ import org.example.zzudate.entity.User;
 import org.example.zzudate.mapper.MatchResultMapper;
 import org.example.zzudate.mapper.UserMapper;
 import org.example.zzudate.Result;
+import org.example.zzudate.utils.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.example.zzudate.service.UserService;
 import org.example.zzudate.vo.MatchResultVo;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/match")
@@ -24,8 +27,9 @@ public class MatchController {
     private UserMapper userMapper;
     @Autowired
     private MatchResultMapper matchResultMapper;
-    @PostMapping
-    public Result receiveBaseInfo(UserBaseInfoDto userBaseInfoDto) {
+
+    @PostMapping("savebaseinfo")
+    public Result saveBaseInfo(UserBaseInfoDto userBaseInfoDto) {
         System.out.println("收到基础信息同步请求");
         int tem=userService.saveBaseInfo(userBaseInfoDto);
         if(tem>0){
@@ -34,8 +38,8 @@ public class MatchController {
             return Result.error("同步失败");
         }
     }
-    @PostMapping
-    public Result receiveUserInfo(UserSoulInfoDto userSoulInfoDto) {
+    @PostMapping("saveuserinfo")
+    public Result saveUserInfo(UserSoulInfoDto userSoulInfoDto) {
         System.out.println("收到深度信息同步请求");
         int tem=userService.saveSoulInfo(userSoulInfoDto);
         if(tem>0){
@@ -44,7 +48,7 @@ public class MatchController {
             return Result.error("同步失败");
         }
     }
-    @PostMapping
+    @PostMapping("getmatchresult")
     public Result getMatchResult(String userId) {
         LambdaQueryWrapper<MatchResult> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MatchResult::getUserIdA,userId)
@@ -81,6 +85,9 @@ public class MatchController {
     }
     @PostMapping("/shownumber")
     public Result showNumber(String userId) {
+        if(!userId.equals(CurrentUser.getUserId())){
+            return Result.error("请不要攻击");
+        }
         User user=userMapper.selectById(userId);
         if(user==null||user.getNumber()==null) {
             return Result.error("未找到有效的联系方式，请先完善基础资料");
