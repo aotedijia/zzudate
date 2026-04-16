@@ -1,4 +1,4 @@
-package vo;
+package org.example.zzudate.vo;
 
 import lombok.Data;
 

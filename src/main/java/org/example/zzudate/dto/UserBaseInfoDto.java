@@ -1,4 +1,4 @@
-package dto;
+package org.example.zzudate.dto;
 
 import lombok.Data;
 

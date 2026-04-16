@@ -1,11 +1,11 @@
-package service; // 定义包名，属于业务逻辑层
+package org.example.zzudate.service; // 定义包名，属于业务逻辑层
 
 import com.alibaba.fastjson.JSON; // 引入 Fastjson 用于处理 JSON 数据
 import com.alibaba.fastjson.TypeReference; // 引入泛型参考，用于解析复杂的 Map 结构
-import entity.MatchResult; // 引入匹配结果实体类
-import entity.User; // 引入用户实体类
-import mapper.MatchResultMapper; // 引入匹配结果数据库操作接口
-import mapper.UserMapper; // 引入用户数据库操作接口
+import org.example.zzudate.entity.MatchResult; // 引入匹配结果实体类
+import org.example.zzudate.entity.User; // 引入用户实体类
+import org.example.zzudate.mapper.MatchResultMapper; // 引入匹配结果数据库操作接口
+import org.example.zzudate.mapper.UserMapper; // 引入用户数据库操作接口
 import org.springframework.beans.factory.annotation.Autowired; // 引入自动注入注解
 import org.springframework.stereotype.Service; // 引入服务层注解
 

@@ -1,22 +1,19 @@
-package controller;
+package org.example.zzudate.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import dto.UserBaseInfoDto;
-import dto.UserSoulInfoDto;
-import entity.MatchResult;
-import entity.User;
-import mapper.MatchResultMapper;
-import mapper.UserMapper;
+import org.example.zzudate.dto.UserBaseInfoDto;
+import org.example.zzudate.dto.UserSoulInfoDto;
+import org.example.zzudate.entity.MatchResult;
+import org.example.zzudate.entity.User;
+import org.example.zzudate.mapper.MatchResultMapper;
+import org.example.zzudate.mapper.UserMapper;
 import org.example.zzudate.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import service.UserService;
-import vo.MatchResultVo;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.example.zzudate.service.UserService;
+import org.example.zzudate.vo.MatchResultVo;
 
 @RestController
 @RequestMapping("/match")

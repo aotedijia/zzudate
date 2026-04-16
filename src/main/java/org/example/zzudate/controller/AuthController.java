@@ -1,7 +1,6 @@
-package controller;
+package org.example.zzudate.controller;
 
-import entity.User;
-import mapper.UserMapper;
+import org.example.zzudate.entity.User;
 import org.example.zzudate.EmailService;
 import org.example.zzudate.GenerateEmailCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.example.zzudate.Result;
-import service.UserService;
-import vo.TokenVo;
+import org.example.zzudate.service.UserService;
+import org.example.zzudate.vo.TokenVo;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

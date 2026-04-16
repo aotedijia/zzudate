@@ -1,10 +1,10 @@
-package vo;
+package org.example.zzudate.vo;
 
 import lombok.Data;
 
 @Data
 public class TokenVo {
     String accessToken;
-    Long userId;
+    String userId;
     String email;
 }

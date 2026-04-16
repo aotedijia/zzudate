@@ -1,4 +1,4 @@
-package service; // 业务层包名
+package org.example.zzudate.service; // 业务层包名
 
 import org.springframework.stereotype.Service; // Spring 服务注解
 import com.alibaba.fastjson.JSON; // 阿里 JSON 工具

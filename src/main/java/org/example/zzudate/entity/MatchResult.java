@@ -1,4 +1,4 @@
-package entity;
+package org.example.zzudate.entity;
 
 import lombok.Data;
 

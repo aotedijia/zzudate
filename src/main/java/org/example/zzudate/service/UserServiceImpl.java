@@ -1,10 +1,10 @@
-package service;
+package org.example.zzudate.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import dto.UserBaseInfoDto;
-import dto.UserSoulInfoDto;
-import entity.User;
-import mapper.UserMapper;
+import org.example.zzudate.dto.UserBaseInfoDto;
+import org.example.zzudate.dto.UserSoulInfoDto;
+import org.example.zzudate.entity.User;
+import org.example.zzudate.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 @Service
