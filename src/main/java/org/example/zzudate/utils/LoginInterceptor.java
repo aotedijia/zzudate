@@ -26,7 +26,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             return false;
         }
         stringRedisTemplate.expire(key, 48, TimeUnit.HOURS);
-        CurrentUser.setUserId(Long.valueOf(userId));
+        CurrentUser.setUserId(userId);
         return true;
     }
     @Override

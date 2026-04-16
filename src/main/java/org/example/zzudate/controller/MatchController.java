@@ -50,6 +50,9 @@ public class MatchController {
     }
     @PostMapping("getmatchresult")
     public Result getMatchResult(String userId) {
+        if(!userId.equals(CurrentUser.getUserId())){
+            return Result.error("请不要攻击");
+        }
         LambdaQueryWrapper<MatchResult> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MatchResult::getUserIdA,userId)
                 .or()
