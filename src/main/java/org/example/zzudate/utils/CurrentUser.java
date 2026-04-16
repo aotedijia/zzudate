@@ -4,10 +4,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CurrentUser {
-    private static final ThreadLocal<Long> USER_THREAD_LOCAL =
+    private static final ThreadLocal<String> USER_THREAD_LOCAL =
             new ThreadLocal<>();
 
-    public static void setUserId(Long userId) {
+    public static void setUserId(String userId) {
         USER_THREAD_LOCAL.set(userId);
     }
 
