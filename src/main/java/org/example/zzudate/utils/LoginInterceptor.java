@@ -16,6 +16,9 @@ public class LoginInterceptor implements HandlerInterceptor {
     }
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true; // 探路者直接放行
+        }
         String accessToken = request.getHeader("Authorization");
         if(accessToken==null){
             return false;

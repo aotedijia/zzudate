@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class UserBaseInfoDto {
     private String id;
+    private String name;
     private String number;//联系方式
     private Boolean gender;//0为女，1为男
     private String height;//身高

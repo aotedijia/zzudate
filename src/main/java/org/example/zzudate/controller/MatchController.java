@@ -10,9 +10,7 @@ import org.example.zzudate.mapper.UserMapper;
 import org.example.zzudate.Result;
 import org.example.zzudate.utils.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.example.zzudate.service.UserService;
 import org.example.zzudate.vo.MatchResultVo;
 
@@ -20,6 +18,7 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/match")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class MatchController {
     @Autowired
     private UserService userService;
@@ -29,7 +28,8 @@ public class MatchController {
     private MatchResultMapper matchResultMapper;
 
     @PostMapping("savebaseinfo")
-    public Result saveBaseInfo(UserBaseInfoDto userBaseInfoDto) {
+    public Result saveBaseInfo(@RequestBody UserBaseInfoDto userBaseInfoDto) {
+        userBaseInfoDto.setId(CurrentUser.getUserId());
         System.out.println("收到基础信息同步请求");
         int tem=userService.saveBaseInfo(userBaseInfoDto);
         if(tem>0){
@@ -39,7 +39,7 @@ public class MatchController {
         }
     }
     @PostMapping("saveuserinfo")
-    public Result saveUserInfo(UserSoulInfoDto userSoulInfoDto) {
+    public Result saveUserInfo(@RequestBody UserSoulInfoDto userSoulInfoDto) {
         System.out.println("收到深度信息同步请求");
         int tem=userService.saveSoulInfo(userSoulInfoDto);
         if(tem>0){
@@ -49,7 +49,8 @@ public class MatchController {
         }
     }
     @PostMapping("getmatchresult")
-    public Result getMatchResult(String userId) {
+    public Result getMatchResult(@RequestParam String userId) {
+        System.out.println("11111");
         if(!userId.equals(CurrentUser.getUserId())){
             return Result.error("请不要攻击");
         }
@@ -70,18 +71,30 @@ public class MatchController {
 
         matchResultVo.setScore(matchResult.getScore());
         matchResultVo.setDescription(matchResult.getDescription());
-        //判断自己是否坦白
-        boolean iHaveNumber=isUserA ? (matchResult.getNumberA() != null) : (matchResult.getNumberB() != null);
-        //判断对方是否已坦白
-        boolean iHaveNumber2=isUserA ? (matchResult.getNumberB() != null) : (matchResult.getNumberA() != null);
+// 1. 判断坦白指标
+        boolean iHaveNumber = isUserA ? (matchResult.getNumberA() != null) : (matchResult.getNumberB() != null);
+        boolean iHaveNumber2 = isUserA ? (matchResult.getNumberB() != null) : (matchResult.getNumberA() != null);
 
         matchResultVo.setIHaveNumber(iHaveNumber);
         matchResultVo.setIHaveNumber2(iHaveNumber2);
 
-        //只有对方坦白了 才能在Vo中看到联系方式
-        if (iHaveNumber2) {
-            String otherContact = isUserA ? matchResult.getNumberB() : matchResult.getNumberA();
-            matchResultVo.setNumber(otherContact);
+// 2. 核心：三阶信息分发逻辑
+        if (iHaveNumber && iHaveNumber2) {
+            // 【阶段 A：共鸣达成】
+            // 双方都坦白了，我能看到对方的号码
+            String otherNumber = isUserA ? matchResult.getNumberB() : matchResult.getNumberA();
+            matchResultVo.setNumber(otherNumber);
+        }
+        else if (iHaveNumber) {
+            // 【阶段 B：单向展示】
+            // 我坦白了但对方没点，我只能看到我自己的号码（作为已公示的反馈）
+            String myNumber = isUserA ? matchResult.getNumberA() : matchResult.getNumberB();
+            matchResultVo.setNumber(myNumber);
+        }
+        else {
+            // 【阶段 C：信息封锁】
+            // 只要我没点坦白，无论对方点没点，我拿到的 number 永远是 null
+            matchResultVo.setNumber(null);
         }
 
         return Result.success(matchResultVo);

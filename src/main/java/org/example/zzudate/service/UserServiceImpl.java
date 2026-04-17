@@ -22,9 +22,11 @@ public class UserServiceImpl implements UserService {
         return userMapper.insert(user);}
 
     public int saveBaseInfo(UserBaseInfoDto userBaseInfoDto) {
+        System.out.println("收到同步请求，数据内容：" + userBaseInfoDto.toString());
         User user=new User();
         user.setId(userBaseInfoDto.getId());
         user.setNumber(userBaseInfoDto.getNumber());
+        user.setName(userBaseInfoDto.getName());
         user.setGender(userBaseInfoDto.getGender());
         user.setHeight(userBaseInfoDto.getHeight());
         user.setCollege(userBaseInfoDto.getCollege());

@@ -31,6 +31,7 @@ public class AuthController {
         if (email == null) {
             throw new IllegalArgumentException("邮箱不能为空");
         }
+        //email=email+"@gs.zzu.edu.cn";
         String limitKey = "login:emailcode:limit:" + email;
         Boolean success = stringRedisTemplate.opsForValue()
                 .setIfAbsent(limitKey, "1", 60, TimeUnit.SECONDS);
@@ -39,7 +40,7 @@ public class AuthController {
             return Result.error("发送过于频繁，请60秒后再试");
         }
         String emailcode = GenerateEmailCode.generateEmailcode();
-        emailService.sendCode(email, emailcode);
+        emailService.sendCode(email,emailcode);
         String key = "login:code:" + email;
         stringRedisTemplate.opsForValue().set(key, emailcode, 5, TimeUnit.MINUTES);
         return Result.success("验证码已经发送");
@@ -49,6 +50,7 @@ public class AuthController {
         if (email == null || emailCode == null) {
             throw new IllegalArgumentException("邮箱或者验证码不能为空");
         }
+        //email=email+"@gs.zzu.edu.cn";
         String key = "login:code:" + email;
         String emailcode = stringRedisTemplate.opsForValue().get(key);
         if (emailcode == null || !emailcode.equals(emailCode)) {
@@ -64,7 +66,7 @@ public class AuthController {
             userService.saveUser(user);
         }
         String accessToken = UUID.randomUUID().toString();
-        stringRedisTemplate.opsForValue().set("login:accessToken:" + accessToken, user.getId().toString(), 48, TimeUnit.HOURS);
+        stringRedisTemplate.opsForValue().set("login:accessToken:" + accessToken, user.getId(), 48, TimeUnit.HOURS);
         TokenVo tokenVo = new TokenVo();
         tokenVo.setAccessToken(accessToken);
         tokenVo.setUserId(user.getId());

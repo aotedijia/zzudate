@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class User{
     private String id;
-    private String Name;
+    private String name;
     private String email;//邮箱
     private LocalDateTime createTime;//注册时间
     private String number;//联系方式

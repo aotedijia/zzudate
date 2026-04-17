@@ -7,6 +7,7 @@ import org.example.zzudate.entity.User; // 引入用户实体类
 import org.example.zzudate.mapper.MatchResultMapper; // 引入匹配结果数据库操作接口
 import org.example.zzudate.mapper.UserMapper; // 引入用户数据库操作接口
 import org.springframework.beans.factory.annotation.Autowired; // 引入自动注入注解
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service; // 引入服务层注解
 
 import java.util.*; // 引入工具类（List, Map, Set, UUID 等）
@@ -25,6 +26,7 @@ public class WeeklyMatchService { // 每周定时匹配核心业务类
      * 执行每周灵魂匹配的核心方法
      * 逻辑：清空旧数据 -> 预存画像 -> 双循环寻找最优解 -> 批量写入
      */
+    @Scheduled(cron = "0 40 1 ? * SAT")
     public void runWeeklySoulMatch(){ // 全量匹配执行入口
         long startTime = System.currentTimeMillis(); // 记录程序开始执行的时间戳，用于性能分析
         matchResultMapper.delete(null); // 第一步：物理清空旧的匹配记录（阅后即焚，开启新一周）
@@ -69,6 +71,8 @@ public class WeeklyMatchService { // 每周定时匹配核心业务类
                 MatchResult result = new MatchResult(); // 实例化一条匹配记录
                 result.setId(UUID.randomUUID().toString()); // 为该条结果生成一个唯一的随机 ID
                 result.setUserIdA(userA.getId()); // 设置甲方 ID
+                result.setUserAnswerA(userA.getAnswers());
+                result.setUserAnswerB(bestMatch.getAnswers());
                 result.setUserIdB(bestMatch.getId()); // 设置乙方 ID
                 result.setUserNameA(userA.getName()); // 记录甲方姓名的瞬时快照
                 result.setUserNameB(bestMatch.getName()); // 记录乙方姓名的瞬时快照
@@ -121,7 +125,7 @@ public class WeeklyMatchService { // 每周定时匹配核心业务类
         StringBuilder desc = new StringBuilder(); // 使用 StringBuilder 拼接字符串，性能更佳
         desc.append("基于 40 维画像分析，你们的契合度高达 ").append(String.format("%.1f", totalScore)).append("%。"); // 基础分值播报
 
-        if (totalScore >= 85) { // 针对 85 分以上的高契合度用户
+        if (totalScore >= 60) { // 针对 60 分以上的高契合度用户
             desc.append("这是一场跨越维度的相遇。你们在「").append(strongestDimension).append("」上表现出惊人的一致，"); // 肯定最强维度的共鸣
             desc.append("仿佛早已习惯了彼此的思考方式。"); // 情感引导
         } else { // 针对分值在及格线以上的普通匹配
