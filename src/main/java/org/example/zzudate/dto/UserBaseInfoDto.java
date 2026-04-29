@@ -13,4 +13,5 @@ public class UserBaseInfoDto {
     private String college;//学院
     private String campus;//校区-主校区-北校区-南校区-东校区
     private Integer grade;//年级-1本科生2硕士研究生3博士研究生
+    private String choose;
 }

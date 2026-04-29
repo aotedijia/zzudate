@@ -7,4 +7,5 @@ public class TokenVo {
     String accessToken;
     String userId;
     String email;
+    String name;
 }

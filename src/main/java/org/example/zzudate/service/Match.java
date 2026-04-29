@@ -49,7 +49,7 @@ public class Match { // 灵魂匹配核心算法类
         if (id >= 1 && id <= 8) return 0.025; // 物质底色 (20%)
         if (id >= 9 && id <= 18) return 0.025; // 精神依恋 (25%)
         if (id >= 19 && id <= 28) return 0.015; // 生活节律 (15%)
-        if (id >= 29 && id <= 40) return 0.0333; // 灵魂底线 (40%)
+        if (id >= 29 && id <= 40) return 1.0 / 30; // 灵魂底线 (40%)
         return 0.0; // 兜底
     }
 }

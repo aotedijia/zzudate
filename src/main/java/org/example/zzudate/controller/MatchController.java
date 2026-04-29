@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.example.zzudate.service.UserService;
 import org.example.zzudate.vo.MatchResultVo;
 
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/match")
@@ -30,7 +29,7 @@ public class MatchController {
     @PostMapping("savebaseinfo")
     public Result saveBaseInfo(@RequestBody UserBaseInfoDto userBaseInfoDto) {
         userBaseInfoDto.setId(CurrentUser.getUserId());
-        System.out.println("收到基础信息同步请求");
+        System.out.println("收到基础信息同步请求,用户id为："+CurrentUser.getUserId());
         int tem=userService.saveBaseInfo(userBaseInfoDto);
         if(tem>0){
             return Result.success("同步成功");
@@ -38,9 +37,10 @@ public class MatchController {
             return Result.error("同步失败");
         }
     }
+
     @PostMapping("saveuserinfo")
     public Result saveUserInfo(@RequestBody UserSoulInfoDto userSoulInfoDto) {
-        System.out.println("收到深度信息同步请求");
+        System.out.println("收到深度信息同步请求,用户id为："+CurrentUser.getUserId());
         int tem=userService.saveSoulInfo(userSoulInfoDto);
         if(tem>0){
             return Result.success("同步成功");
@@ -48,21 +48,21 @@ public class MatchController {
             return Result.error("同步失败");
         }
     }
+
     @PostMapping("getmatchresult")
     public Result getMatchResult(@RequestParam String userId) {
-        System.out.println("11111");
+        System.out.println("收到匹配结果获取请求,用户id为："+CurrentUser.getUserId());
         if(!userId.equals(CurrentUser.getUserId())){
             return Result.error("请不要攻击");
         }
         LambdaQueryWrapper<MatchResult> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(MatchResult::getUserIdA,userId)
-                .or()
-                .eq(MatchResult::getUserIdB, userId);
-        MatchResult matchResult = matchResultMapper.selectOne(wrapper);
-        if (matchResult == null) {
-            return Result.success("很遗憾本周没有匹配到人");
+        wrapper.and(w -> w.eq(MatchResult::getUserIdA, userId).or().eq(MatchResult::getUserIdB, userId))
+                .last("LIMIT 1");
+        MatchResult matchResult=matchResultMapper.selectOne(wrapper);
+        if(matchResult==null){
+            return Result.success("本周未匹配到人");
         }
-        MatchResultVo  matchResultVo = new MatchResultVo();
+        MatchResultVo matchResultVo=new MatchResultVo();
         matchResultVo.setUserId(userId);
         boolean isUserA=userId.equals(matchResult.getUserIdA());
         String otherUserId=isUserA ? matchResult.getUserIdB() : matchResult.getUserIdA();
@@ -71,32 +71,31 @@ public class MatchController {
 
         matchResultVo.setScore(matchResult.getScore());
         matchResultVo.setDescription(matchResult.getDescription());
-// 1. 判断坦白指标
+        // 判断坦白指标
         boolean iHaveNumber = isUserA ? (matchResult.getNumberA() != null) : (matchResult.getNumberB() != null);
         boolean iHaveNumber2 = isUserA ? (matchResult.getNumberB() != null) : (matchResult.getNumberA() != null);
 
         matchResultVo.setIHaveNumber(iHaveNumber);
         matchResultVo.setIHaveNumber2(iHaveNumber2);
 
-// 2. 核心：三阶信息分发逻辑
-        if (iHaveNumber && iHaveNumber2) {
-            // 【阶段 A：共鸣达成】
-            // 双方都坦白了，我能看到对方的号码
+        //三阶信息分发逻辑
+        if(iHaveNumber&&iHaveNumber2){
+            //阶段A：共鸣达成
+            //双方都坦白了，我能看到对方的号码
             String otherNumber = isUserA ? matchResult.getNumberB() : matchResult.getNumberA();
             matchResultVo.setNumber(otherNumber);
         }
-        else if (iHaveNumber) {
-            // 【阶段 B：单向展示】
-            // 我坦白了但对方没点，我只能看到我自己的号码（作为已公示的反馈）
+        else if(iHaveNumber){
+            //阶段B：单向展示
+            //我坦白了但对方没点，我只能看到我自己的号码
             String myNumber = isUserA ? matchResult.getNumberA() : matchResult.getNumberB();
             matchResultVo.setNumber(myNumber);
         }
-        else {
-            // 【阶段 C：信息封锁】
-            // 只要我没点坦白，无论对方点没点，我拿到的 number 永远是 null
+        else{
+            //阶段C：信息封锁
+            //只要我没点坦白，无论对方点没点，我拿到的number永远是null
             matchResultVo.setNumber(null);
         }
-
         return Result.success(matchResultVo);
     }
     @PostMapping("/shownumber")
@@ -110,9 +109,8 @@ public class MatchController {
         }
         String number=user.getNumber();
         LambdaQueryWrapper<MatchResult> wrapper=new LambdaQueryWrapper<>();
-        wrapper.eq(MatchResult::getUserIdA,userId)
-                .or()
-                .eq(MatchResult::getUserIdB,userId);
+        wrapper.and(w -> w.eq(MatchResult::getUserIdA, userId).or().eq(MatchResult::getUserIdB, userId))
+                .last("LIMIT 1");
         MatchResult matchResult = matchResultMapper.selectOne(wrapper);
         if(matchResult==null){
             return Result.error("本周暂无匹配结果，无法进行坦白");

@@ -18,6 +18,10 @@ public class UserServiceImpl implements UserService {
         wrapper.eq(User::getEmail,email);
         return userMapper.selectOne(wrapper);}
 
+    public User getUserById(String id) {
+        return userMapper.selectById(id);
+    }
+
     public int saveUser(User user) {
         return userMapper.insert(user);}
 
@@ -32,6 +36,7 @@ public class UserServiceImpl implements UserService {
         user.setCollege(userBaseInfoDto.getCollege());
         user.setCampus(userBaseInfoDto.getCampus());
         user.setGrade(userBaseInfoDto.getGrade());
+        user.setChoose(userBaseInfoDto.getChoose());
 
         int result=userMapper.updateById(user);
         if(result>0) {
@@ -49,5 +54,9 @@ public class UserServiceImpl implements UserService {
             System.out.println("深度信息同步成功，用户ID:"+user.getId());
         }
         return result;
+    }
+
+    public Long userCount() {
+        return userMapper.selectCount(null);
     }
 }
